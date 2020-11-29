@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <title>De we all think the same?</title>
+    <style>
+        body {
+          font-family:times;
+          background:#d92f2f;
+          display:flex;
+          justify-content:center;
+          align-items:stretch;
+          flex-direction:column;
+          margin:0;
+          min-height:100%;
+        }
+        
+        h1 {
+          text-align:center;
+          margin:2rem;
+          text-shadow: 2px 2px 0 white;
+          font-weight:bold;
+          font-size:72px;
+          max-width:350px;
+        }
+        
+        h2 {
+          text-align:center;
+          margin:2rem;
+          text-shadow: 1px 1px 3px #111;
+          color:#efefef;
+          font-weight:bold;
+          font-size:48px;
+          max-width:750px;
+          flex-grow:1;
+        }
+        
+        a {
+          color:white;
+          font-weight:bold;
+          text-decoration:none;
+          display:inline-block;
+          border:3px solid #ffffff91;
+          padding:1rem;
+          margin:2rem;
+          font-size:36px;
+        }
+        
+        a:hover {
+          background:#ffffff21;
+          filter: blur(1px);
+        }
+        
+        .buttons {
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+        
+        .slider {
+          cursor:pointer;
+          cursor:crosshair;
+          cursor:cell;
+          display:flex;
+          flex-grow:1;
+          margin:1rem;
+          background:#ffffff2b;
+          background:linear-gradient(90deg, #dc0000, #fddd27, #4dfd27);
+          position:relative;
+        }
+        
+        .agreement {
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+          align-items:center;
+          border:3px solid white;
+          flex-grow:1;
+          flex-basis:0;
+          font-family:sans-serif;
+          font-size:32px;
+          font-weight:bold;
+          color:white;
+        }
+        
+        .center {
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+        
+        .opinion {
+          position:absolute;
+          font-weight:bold;
+          font-size:1.5rem;
+          transform:translate(-50%, -50%);
+          font-family:sans-serif;
+          background: #4c2897;
+          color:white;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <h2>
+        Extraterrestrial aliens should be allowed to live among us
+      </h2>
+    </div>
+    <div id="slider" class="slider">
+      <div class="agreement fullydisagree"><span>No?</span><span>NO!</span></div>
+      <div class="agreement disagree"></div>
+      <div class="agreement slightlydisagree"></div>
+      <div class="agreement slightlyagree"></div>
+      <div class="agreement agree"></div>
+      <div class="agreement fullyagree"><span>Yes?</span><span>YES!</span></div>
+      <div id="opinion" style="left:50%; top:5%;" class="opinion">
+        Filip
+      </div>
+    </div>
+    <script>
+      document.getElementById('slider').addEventListener('click', function (event) {
+          const slider = document.getElementById('slider');
+          const boundingBox = slider.getBoundingClientRect();
+          
+          const clientX = (typeof event.clientX === 'number') ? event.clientX : event.changedTouches[0].clientX;
+          const clientY = (typeof event.clientY === 'number') ? event.clientY : event.changedTouches[0].clientY;
+          
+          const relativeX = clientX - boundingBox.left;
+          const relativeY = clientY - boundingBox.top;
+
+          document.getElementById('opinion').style.left = (relativeX / boundingBox.width * 100) + "%";
+          document.getElementById('opinion').style.top = (relativeY / boundingBox.height * 100) + "%";
+      });
+      
+      function randomColor () {
+        let hue = Math.floor((Math.random() * 360));
+        document.body.style.background = "linear-gradient(0deg, hsl(" + hue + ", 81%, 59%) 0%, hsl(" + (hue + Math.random() * 70 + 20) + ", 81%, 59%))";
+      }
+      
+      randomColor();
+    </script>
+  </body>
+</html>
