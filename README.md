@@ -1,4 +1,5 @@
 # doweallthinkthesame
+No.
 
 ## Design decisions:
 1. I am keeping it simple and short as a proof of concept
@@ -17,3 +18,5 @@
 2. Split up rooms over more servers, perhaps client side somehow? Let url define server?
   -> On trying to connect, if full, go to next server, just hardcode servers/ports? KISS
   -> Should rooms be coordinated somehow? How to let clients join the same private room?
+
+
