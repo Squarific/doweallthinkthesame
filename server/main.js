@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const Room = require('./Room.js').default;
+const Room = require('./Room.js');
 const rooms = {};
 
 const MIN_TIME_BETWEEN_MESSAGES_OF_ONE_CLIENT = 40;
@@ -10,7 +10,7 @@ function heartbeat() {
 
 function joinRoom (socket, room) {
   if (typeof room !== 'string' || room.length < 5 || room.length > 10) socket.terminate();
-  if (!rooms[room]) rooms[room] = new Room();
+  if (!rooms[room]) rooms[room] = new Room(room);
 
   rooms[room].join(socket);
   socket.room = rooms[room];
@@ -26,7 +26,7 @@ function cleanEmptyRooms () {
 function handleMessage (message) {
   if (Date.now() - this.lastSent < MIN_TIME_BETWEEN_MESSAGES_OF_ONE_CLIENT) return;
   if (!this.room) return joinRoom(this, message);
-  this.room.send(message);
+  this.room.send(this, message);
   this.lastSent = Date.now();
 }
  
