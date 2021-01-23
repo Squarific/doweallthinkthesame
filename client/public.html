@@ -11,6 +11,7 @@
           flex-direction:column;
           margin:0;
           min-height:100%;
+          overflow:hidden;
         }
         
         h1 {
@@ -95,6 +96,11 @@
           font-family:sans-serif;
           background: #4c2897;
           color:white;
+          padding:5px;
+        }
+        
+        #myopinion {
+          background:#972828;
         }
     </style>
   </head>
@@ -111,11 +117,52 @@
       <div class="agreement slightlyagree"></div>
       <div class="agreement agree"></div>
       <div class="agreement fullyagree"><span>Yes?</span><span>YES!</span></div>
-      <div id="opinion" style="left:50%; top:5%;" class="opinion">
-        Filip
+      <div id="myopinion" style="left:50%; top:50%;" class="opinion">
+        ME
       </div>
     </div>
     <script>
+      let reconnect_seconds = 2;
+      let socket;
+      
+      /*
+        SOCKET
+      */
+      function connect () {
+        socket = new WebSocket('ws://localhost:8080');
+      
+        socket.onmessage = (m) => {
+          console.log("Socket: " + m.data);
+          receiveMessage(m);
+        };
+        
+        socket.onopen = () => {
+          console.log("Socket established, joining public room");
+          clearAllOpinions();
+          socket.send('public');
+          reconnect_seconds = 2;
+        };
+        
+        socket.onclose = function(e) {
+          console.log('Socket is closed. Reconnect will be attempted in ' + reconnect_seconds + ' seconds.', e.reason);
+          
+          setTimeout(function() {
+            connect();
+            
+            reconnect_seconds *= 2;
+            if (reconnect_seconds > 10 * 60) reconnect_seconds = 10 * 60;
+          }, reconnect_seconds * 1000);
+        };
+        
+        socket.onerror = function(err) {
+          console.error('Socket encountered error: ', err.message, 'Closing socket');
+          socket.close();
+        };
+      }
+    
+      /*
+        CLICKING
+      */
       document.getElementById('slider').addEventListener('click', function (event) {
           const slider = document.getElementById('slider');
           const boundingBox = slider.getBoundingClientRect();
@@ -125,10 +172,57 @@
           
           const relativeX = clientX - boundingBox.left;
           const relativeY = clientY - boundingBox.top;
+          
+          const xRatio = relativeX / boundingBox.width;
+          const yRatio = relativeY / boundingBox.height;
 
-          document.getElementById('opinion').style.left = (relativeX / boundingBox.width * 100) + "%";
-          document.getElementById('opinion').style.top = (relativeY / boundingBox.height * 100) + "%";
+          document.getElementById('myopinion').style.left = (xRatio * 100) + "%";
+          document.getElementById('myopinion').style.top = (yRatio * 100) + "%";
+          
+          socket.send("Filip;" + xRatio.toPrecision(6) + ";" + yRatio.toPrecision(6));
       });
+      
+      /*
+        RECEIVING POSITIONS
+      */
+      
+      function receiveMessage (m) {
+        const message = m.data.split(";");
+        
+        const socketId = message[0];
+        const socketName = message[1];
+        const ratioX = message[2];
+        const ratioY = message[3];
+        
+        updateOpinion(socketId, socketName, ratioX, ratioY);
+      }
+      
+      function updateOpinion (socketId, socketName, ratioX, ratioY) {
+        const opinion = document.getElementById("opinion-from-" + socketId) || createOpinion(socketId);
+        
+        opinion.style.left = (ratioX * 100) + "%";
+        opinion.style.top = (ratioY * 100) + "%";
+
+        while (opinion.firstChild) opinion.removeChild(opinion.firstChild);
+        opinion.appendChild(document.createTextNode(socketName));
+      }
+      
+      function createOpinion (socketId) {
+        const opinion = document.getElementById("slider").appendChild(document.createElement("div"));
+        opinion.className = "opinion";
+        opinion.id = "opinion-from-" + socketId;
+        return opinion;
+      }
+      
+      function clearAllOpinions () {
+        let opinions = document.getElementsByClassName("opinion");
+        for (let i = opinions.length - 1; i >= 0; i--) {
+          if (opinions[i].id = "myopinion") {
+            
+          }
+          opinions[i].parentNode.removeChild(opinions[i]);
+        }
+      }
       
       function randomColor () {
         let hue = Math.floor((Math.random() * 360));
@@ -136,6 +230,7 @@
       }
       
       randomColor();
+      connect();
     </script>
   </body>
 </html>
