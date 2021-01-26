@@ -12,6 +12,10 @@ class Room {
      * Join the socket to this room
      */
     join (socket) {
+      this._join(socket);
+    }
+    
+    _join (socket) {
         this.sockets.push(socket);
         this.lastId++;
         socket.roomid = this.lastId;
@@ -23,16 +27,24 @@ class Room {
      * Leave the socket from this room
      */
     leave (socket) {
+        this._leave(socket);
+    }
+    
+    _leave (socket) {
         let index;
         while (index = this.sockets.indexOf(socket) > -1) {
             this.sockets.splice(index, 1);
         }
     }
+    
+    ensureActiveClients () {
+      this._ensureActiveClients();
+    }
 
     /**
      * Removes all clients that do not have an open socket
      */
-    ensureActiveClients () {
+    _ensureActiveClients () {
         this.sockets = this.sockets.filter((socket) => socket.readyState === WebSocket.OPEN);
     }
 
@@ -41,7 +53,11 @@ class Room {
      * @param {Socket} Socket object containing a roomid, if not given will send message without owner
      * @param {String} message
      */
-    send (from, message) {
+    send(from, message) {
+      this._send(from, message);
+    }
+     
+    _send (from, message) {
         let messageToSend = from.roomid + ";" + message;
         console.log("[" + new Date().toUTCString() + "] [" + this.name + "] " + messageToSend);
         
