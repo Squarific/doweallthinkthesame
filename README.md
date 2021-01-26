@@ -6,6 +6,7 @@ Small web app that allows sharing your opinion with the other people on the page
 ## Design decisions:
 1. I am keeping it simple and short as a proof of concept
 2. Performance, I want it to easily scale well both horizontally and vertically without much effort
+3. Classes have public methods that define the contract and private methods that actually execute, this way it is easy to extend the private behavior on public calls.
 
 ## Todo
 
