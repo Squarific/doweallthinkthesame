@@ -113,7 +113,7 @@
   <body>
     <div id="messages">
       <div id="share">Share this url: </div>
-      <div id="sockets" class="center">not connected</div>
+      <div id="socketcount" class="center">not connected</div>
     </div>
     <div class="center">
       <h2 id="question">
@@ -256,7 +256,7 @@
       function updateSocketCount (socketCount) {
         const socketCountElem = document.getElementById("socketcount");
         while (socketCountElem.firstChild) socketCountElem.removeChild(socketCountElem.firstChild);
-        socketCountElem.appendChild(document.createTextNode(socketCount));
+        socketCountElem.appendChild(document.createTextNode(socketCount + " people connected."));
       }
       
       function updateOpinion (socketId, socketName, ratioX, ratioY) {
