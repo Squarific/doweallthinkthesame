@@ -151,7 +151,7 @@ module.exports = [
   
   /* Religion */
   "After I die, I will still be alive somewhere (heaven, ...)",
-  "There is some intelligent force in this universe that we don't know about ((a) god(s), ...)",
+  "There is something intelligent in this universe that we don't know about. For example one or more gods, nature force, karma, ...",
   
   /* Drugs, addiction */
   "Alcohol is a drug",

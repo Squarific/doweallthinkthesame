@@ -162,12 +162,12 @@
       
         socket.onmessage = (m) => {
           console.log("Socket: " + m.data);
-          updateQuestion("Connected, joining public room.");
           receiveMessage(m);
         };
         
         socket.onopen = () => {
           console.log("Socket established, joining public room");
+          updateQuestion("Connected, joining public room.");
           clearAllOpinions();
           socket.send('public');
           reconnect_seconds = 2;
