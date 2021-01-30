@@ -12,13 +12,9 @@ class Room {
      * Join the socket to this room
      */
     join (socket) {
-      this._join(socket);
-    }
-    
-    _join (socket) {
         this.sockets.push(socket);
         this.lastId++;
-        socket.roomid = this.lastId;
+        socket.socketIdInRoom = this.lastId;
         this.ensureActiveClients();
         console.log("[" + new Date().toUTCString() + "] Room " + this.name + " joined, " + this.sockets.length + " active clients. Lastid: " + this.lastId);
     }
@@ -27,44 +23,47 @@ class Room {
      * Leave the socket from this room
      */
     leave (socket) {
-        this._leave(socket);
-    }
-    
-    _leave (socket) {
         let index;
         while (index = this.sockets.indexOf(socket) > -1) {
             this.sockets.splice(index, 1);
         }
     }
     
-    ensureActiveClients () {
-      this._ensureActiveClients();
-    }
-
     /**
      * Removes all clients that do not have an open socket
      */
-    _ensureActiveClients () {
-        this.sockets = this.sockets.filter((socket) => socket.readyState === WebSocket.OPEN);
+    ensureActiveClients () {
+      this.sockets = this.sockets.filter((socket) => socket.readyState === WebSocket.OPEN);
     }
 
     /**
      * Sends a message to all sockets in this room except the one given
-     * @param {Socket} Socket object containing a roomid, if not given will send message without owner
+     * @param {Socket} from Socket object containing a socketIdInRoom property, you can use -1 to signify the server
      * @param {String} message
      */
-    send(from, message) {
-      this._send(from, message);
-    }
-     
-    _send (from, message) {
-        let messageToSend = from.roomid + ";" + message;
+    broadcastFrom (from, message) {
+        let messageToSend = from.socketIdInRoom + ";" + message;
         console.log("[" + new Date().toUTCString() + "] [" + this.name + "] " + messageToSend);
         
         this.ensureActiveClients();
         for (let index = 0; index < this.sockets.length; index++) {
             if (this.sockets[index] == from) continue;
             this.sockets[index].send(messageToSend);
+        }
+    }
+    
+    /**
+     * Sends a message to a specific socket in this room
+     * @param {Socket} from from Socket object containing a socketIdInRoom property, you can use -1 to signify the server
+     * @param {Socket} target Socket object to send to
+     * @param {String} message
+     */
+    sendFromToTarget (from, target, message) {
+        let messageToSend = from.socketIdInRoom + ";" + message;
+        console.log("[" + new Date().toUTCString() + "] [" + this.name + "] From " + from.socketIdInRoom + " to " + target.socketIdInRoom + ": " + messageToSend);
+        
+        if (target.readyState === WebSocket.OPEN) {
+          target.send(messageToSend);
         }
     }
 }

@@ -106,7 +106,7 @@
   </head>
   <body>
     <div class="center">
-      <h2>
+      <h2 id="question">
         Extraterrestrial aliens should be allowed to live among us
       </h2>
     </div>
@@ -190,11 +190,32 @@
         const message = m.data.split(";");
         
         const socketId = message[0];
+        
+        // Intercept messages from the server
+        if (socketId == -1) {
+          return receiveServerMessage(message);
+        }
+        
+        // Otherwise it is an opinion that we should update
         const socketName = message[1];
         const ratioX = message[2];
         const ratioY = message[3];
-        
         updateOpinion(socketId, socketName, ratioX, ratioY);
+      }
+      
+      function receiveServerMessage (message) {
+        const type = message[1];
+        
+        if (type === "question") {
+          const question = message[2];
+          updateQuestion(question);
+        }
+      }
+      
+      function updateQuestion (question) {
+        const questionElem = document.getElementById('question');
+        while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
+        questionElem.appendChild(document.createTextNode(question));
       }
       
       function updateOpinion (socketId, socketName, ratioX, ratioY) {
@@ -218,7 +239,7 @@
         let opinions = document.getElementsByClassName("opinion");
         for (let i = opinions.length - 1; i >= 0; i--) {
           if (opinions[i].id = "myopinion") {
-            
+            continue;
           }
           opinions[i].parentNode.removeChild(opinions[i]);
         }

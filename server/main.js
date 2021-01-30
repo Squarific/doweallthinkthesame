@@ -26,7 +26,7 @@ function cleanEmptyRooms () {
 function handleMessage (message) {
   if (Date.now() - this.lastSent < MIN_TIME_BETWEEN_MESSAGES_OF_ONE_CLIENT) return;
   if (!this.room) return joinRoom(this, message);
-  this.room.send(this, message);
+  this.room.broadcastFrom(this, message);
   this.lastSent = Date.now();
 }
  
