@@ -181,7 +181,7 @@
           console.log("Socket established, joining public room");
           updateQuestion("Connected, joining public room.");
           clearAllOpinions();
-          socket.send('public');
+          socket.send(room);
           reconnect_seconds = 2;
         };
         
@@ -268,7 +268,7 @@
       function updateSocketCount (socketCount) {
         const socketCountElem = document.getElementById("socketcount");
         while (socketCountElem.firstChild) socketCountElem.removeChild(socketCountElem.firstChild);
-        socketCountElem.appendChild(document.createTextNode(socketCount + " people connected."));
+        socketCountElem.appendChild(document.createTextNode(socketCount + " people connected"));
       }
       
       function updateOpinion (socketId, socketName, ratioX, ratioY) {
