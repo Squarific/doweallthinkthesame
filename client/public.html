@@ -82,6 +82,14 @@
           color:white;
         }
         
+        .fullyagree {
+          align-items: flex-end;
+        }
+        
+        .fullydisagree {
+          align-items: flex-start;
+        }
+        
         .center {
           display:flex;
           align-items:center;
@@ -176,6 +184,7 @@
           const xRatio = relativeX / boundingBox.width;
           const yRatio = relativeY / boundingBox.height;
 
+          document.getElementById('myopinion').style.display = "";
           document.getElementById('myopinion').style.left = (xRatio * 100) + "%";
           document.getElementById('myopinion').style.top = (yRatio * 100) + "%";
           
@@ -216,6 +225,7 @@
         const questionElem = document.getElementById('question');
         while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
         questionElem.appendChild(document.createTextNode(question));
+        clearAllOpinions();
       }
       
       function updateOpinion (socketId, socketName, ratioX, ratioY) {
@@ -225,7 +235,7 @@
         opinion.style.top = (ratioY * 100) + "%";
 
         while (opinion.firstChild) opinion.removeChild(opinion.firstChild);
-        opinion.appendChild(document.createTextNode(socketName));
+        opinion.appendChild(document.createTextNode(socketName.slice(0, 10)));
       }
       
       function createOpinion (socketId) {
@@ -239,6 +249,7 @@
         let opinions = document.getElementsByClassName("opinion");
         for (let i = opinions.length - 1; i >= 0; i--) {
           if (opinions[i].id = "myopinion") {
+            opinions[i].style.display = "none";
             continue;
           }
           opinions[i].parentNode.removeChild(opinions[i]);

@@ -5,7 +5,7 @@ class Room {
         this.name = name;
         this.lastId = 0;
         this.sockets = [];
-        console.log("[" + new Date().toUTCString() + "] Room " + this.name + " created");
+        console.log("[" + new Date().toUTCString() + "] [" + this.name + "] created");
     }
 
     /**
@@ -16,7 +16,7 @@ class Room {
         this.lastId++;
         socket.socketIdInRoom = this.lastId;
         this.ensureActiveClients();
-        console.log("[" + new Date().toUTCString() + "] Room " + this.name + " joined, " + this.sockets.length + " active clients. Lastid: " + this.lastId);
+        console.log("[" + new Date().toUTCString() + "] [" + this.name + "] " + socket.ip + " joined as " + this.lastId + ", currently " + this.sockets.length + " active clients.");
     }
 
     /**

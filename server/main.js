@@ -26,6 +26,7 @@ function cleanEmptyRooms () {
 function handleMessage (message) {
   if (Date.now() - this.lastSent < MIN_TIME_BETWEEN_MESSAGES_OF_ONE_CLIENT) return;
   if (!this.room) return joinRoom(this, message);
+  if (message.length > 128) return;
   this.room.broadcastFrom(this, message);
   this.lastSent = Date.now();
 }
@@ -35,8 +36,9 @@ const wss = new WebSocket.Server({
   maxPayload: 1024
 });
  
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws, req) {
   ws.isAlive = true;
+  ws.ip = req.socket.remoteAddress;
   ws.on('pong', heartbeat);
   ws.on('message', handleMessage);
   ws.lastSent = 0;
