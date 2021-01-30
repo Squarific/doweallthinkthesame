@@ -140,6 +140,7 @@ module.exports = [
   "Sex education is important",
   "Schools should ask students to evaluate their teachers.",
   "Clothing and appearance should be restricted in schools",
+  "Schools should be free to restrict clothing and appearance",
 
   /* Technology, predictions, future */
   "Technology is scary",

@@ -13,6 +13,7 @@ Small web app that allows sharing your opinion with the other people on the page
 ### Functionality
 1. Chat -> Seperate server?
 2. WebsitePluginStore?
+3. Timer
 
 ### Performance
 1. Disconnect clients if time start slipping

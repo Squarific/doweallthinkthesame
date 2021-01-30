@@ -70,6 +70,7 @@
           font-size:32px;
           font-weight:bold;
           color:white;
+          z-index:10;
         }
         
         .fullyagree {
@@ -95,6 +96,7 @@
           background: #4c2897;
           color:white;
           padding:5px;
+          z-index:100;
         }
         
         #myopinion {
@@ -107,6 +109,15 @@
           color:white;
           display: flex;
           justify-content: space-between;
+        }
+        
+        .graygradient {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(0deg, #54545400, #545454);
+          margin: 0;
+          z-index: 0;
         }
     </style>
   </head>
@@ -121,6 +132,7 @@
       </h2>
     </div>
     <div id="slider" class="slider">
+      <div class="graygradient"></div>
       <div class="agreement fullydisagree"><span>No?</span><span>NO!</span></div>
       <div class="agreement disagree"></div>
       <div class="agreement slightlydisagree"></div>
@@ -162,12 +174,12 @@
       
         socket.onmessage = (m) => {
           console.log("Socket: " + m.data);
-          updateQuestion("Connected, joining public room.");
           receiveMessage(m);
         };
         
         socket.onopen = () => {
           console.log("Socket established, joining public room");
+          updateQuestion("Connected, joining public room.");
           clearAllOpinions();
           socket.send('public');
           reconnect_seconds = 2;
