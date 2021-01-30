@@ -2,6 +2,10 @@
   <head>
     <title>De we all think the same?</title>
     <style>
+        html {
+          min-height:100%;
+        }
+    
         body {
           font-family:times;
           background:#d92f2f;
@@ -56,6 +60,7 @@
           background:#ffffff2b;
           background:linear-gradient(90deg, #dc0000, #fddd27, #4dfd27);
           position:relative;
+          border:3px solid white;
         }
         
         .agreement {
@@ -63,7 +68,7 @@
           flex-direction:column;
           justify-content:space-between;
           align-items:center;
-          border:3px solid white;
+          border:0px solid white;
           flex-grow:1;
           flex-basis:0;
           font-family:sans-serif;
@@ -71,6 +76,7 @@
           font-weight:bold;
           color:white;
           z-index:10;
+          padding:5px;
         }
         
         .fullyagree {
