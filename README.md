@@ -11,15 +11,15 @@ Small web app that allows sharing your opinion with the other people on the page
 ## Todo
 
 ### Functionality
-1. Send questions to clients
-2. Send positions to clients
-3. Chat -> Seperate server?
-4. WebsitePluginStore?
+1. Chat -> Seperate server?
+2. WebsitePluginStore?
+3. Show amount of sockets connected to room
+4. Private client
 
 ### Performance
 1. Disconnect clients if time start slipping
 2. Split up rooms over more servers, perhaps client side somehow? Let url define server?
   -> On trying to connect, if full, go to next server, just hardcode servers/ports? KISS
   -> Should rooms be coordinated somehow? How to let clients join the same private room?
-
+3. Stress test to see how many clients can be connected
 
