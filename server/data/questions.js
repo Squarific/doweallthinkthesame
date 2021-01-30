@@ -185,8 +185,8 @@ module.exports = [
   
   /* Prudeness */
   "People should be allowed to be nude in public",
-  "People show off too much of their body on the internet",
-  "People show off too much of their body on the street",
+  "In general people show off too much of their body on the internet",
+  "In general people show off too much of their body in public",
 
   /* Food */
   "Raisins are disgusting",

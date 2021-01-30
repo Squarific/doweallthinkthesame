@@ -13,8 +13,6 @@ Small web app that allows sharing your opinion with the other people on the page
 ### Functionality
 1. Chat -> Seperate server?
 2. WebsitePluginStore?
-3. Show amount of sockets connected to room
-4. Private client
 
 ### Performance
 1. Disconnect clients if time start slipping

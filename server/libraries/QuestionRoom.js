@@ -15,7 +15,7 @@ class QuestionRoom {
   
   join (socket) {
     this.room.join(socket);
-    this.room.sendFromToTarget(SERVER, socket, "question;" + this.currentQuestion);
+    this.room.sendFromToTarget(SERVER, socket, "question;" + this.room.sockets.length + ";" + this.currentQuestion);
     this.startInterval();
   }
   
@@ -38,7 +38,7 @@ class QuestionRoom {
   }
   
   _newRandomQuestion () {
-    const randomIndex = Math.floor(Math.random() * questions.length);
+    let randomIndex = Math.floor(Math.random() * questions.length);
     
     // Ensure we do not get the same question
     // Also ensure it is within bounds of the question array
@@ -57,7 +57,7 @@ class QuestionRoom {
     
     // Send everyone a new question as the server
     this._newRandomQuestion();
-    this.room.broadcastFrom(SERVER, "question;" + this.currentQuestion);
+    this.room.broadcastFrom(SERVER, "question;" + this.room.sockets.length + ";" + this.currentQuestion);
   }
   
   broadcastFrom (from, message) {

@@ -38,16 +38,6 @@
           color:white;
           font-weight:bold;
           text-decoration:none;
-          display:inline-block;
-          border:3px solid #ffffff91;
-          padding:1rem;
-          margin:2rem;
-          font-size:36px;
-        }
-        
-        a:hover {
-          background:#ffffff21;
-          filter: blur(1px);
         }
         
         .buttons {
@@ -110,12 +100,24 @@
         #myopinion {
           background:#972828;
         }
+        
+        #messages {
+          background:#00000057;
+          padding:5px;
+          color:white;
+          display: flex;
+          justify-content: space-between;
+        }
     </style>
   </head>
   <body>
+    <div id="messages">
+      <div id="share">Share this url: </div>
+      <div id="sockets" class="center">not connected</div>
+    </div>
     <div class="center">
       <h2 id="question">
-        Extraterrestrial aliens should be allowed to live among us
+        This app requires javascript and websockets.
       </h2>
     </div>
     <div id="slider" class="slider">
@@ -132,15 +134,35 @@
     <script>
       let reconnect_seconds = 2;
       let socket;
+      let name = prompt("Please choose a name");
+      
+      var urlInfo = location.hash.substr(1, location.hash.length).split(",");
+      var room = urlInfo[0] || "public";
+      location.hash = room;
+      document.getElementById('share').innerHTML = "Share this url with your friends: <a href=\"" + location + "\">" + location + "</a>";
+      
+      function makeid(length) {
+         var result           = '';
+         var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+         var charactersLength = characters.length;
+         for ( var i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+         }
+         return result;
+      }
       
       /*
         SOCKET
       */
       function connect () {
-        socket = new WebSocket('ws://localhost:8080');
+        clearAllOpinions();
+        updateQuestion("Connecting...");
+        
+        socket = new WebSocket('ws://direct.anondraw.com:7846');
       
         socket.onmessage = (m) => {
           console.log("Socket: " + m.data);
+          updateQuestion("Connected, joining public room.");
           receiveMessage(m);
         };
         
@@ -162,8 +184,9 @@
           }, reconnect_seconds * 1000);
         };
         
-        socket.onerror = function(err) {
+        socket.onerror = function(err, err2) {
           console.error('Socket encountered error: ', err.message, 'Closing socket');
+          updateQuestion("Could not connect, reconnecting in " + reconnect_seconds + " seconds.");
           socket.close();
         };
       }
@@ -188,7 +211,7 @@
           document.getElementById('myopinion').style.left = (xRatio * 100) + "%";
           document.getElementById('myopinion').style.top = (yRatio * 100) + "%";
           
-          socket.send("Filip;" + xRatio.toPrecision(6) + ";" + yRatio.toPrecision(6));
+          socket.send(name + ";" + xRatio.toPrecision(6) + ";" + yRatio.toPrecision(6));
       });
       
       /*
@@ -216,8 +239,10 @@
         const type = message[1];
         
         if (type === "question") {
-          const question = message[2];
+          const socketCount = message[2];
+          const question = message[3];
           updateQuestion(question);
+          updateSocketCount(socketCount);
         }
       }
       
@@ -226,6 +251,12 @@
         while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
         questionElem.appendChild(document.createTextNode(question));
         clearAllOpinions();
+      }
+      
+      function updateSocketCount (socketCount) {
+        const socketCountElem = document.getElementById("socketcount");
+        while (socketCountElem.firstChild) socketCountElem.removeChild(socketCountElem.firstChild);
+        socketCountElem.appendChild(document.createTextNode(socketCount));
       }
       
       function updateOpinion (socketId, socketName, ratioX, ratioY) {
