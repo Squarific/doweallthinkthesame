@@ -276,8 +276,8 @@
       function updateSecondsRemaining (secondsRemaining) {
         const secondsElem = document.getElementById('secondsremaining');
         while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
-        secondsElem.appendChild(document.createTextNode(secondsRemaining));
-        secondsElem.secondsRemaining = secondsRemaining;
+        secondsElem.appendChild(document.createTextNode(Math.max(0, secondsRemaining)));
+        secondsElem.secondsRemaining = Math.max(0, secondsRemaining);
       }
       
       function secondsRemainingInterval () {
