@@ -26,13 +26,7 @@ class QuestionRoom {
   startOrContinueInterval () {
     if (this.currentTimeout) return;
     this.currentTimeout = setTimeout(this.newQuestionAndUpdateSockets.bind(this), QUESTION_INTERVAL);
-    this.lastIntervalStart = Date.now();
-  }
-  
-  stopInterval () {
-    delete this.currentTimeout;
-    delete this.lastIntervalStart;
-    clearTimeout(this.currentTimeout);
+    this.lastTimeoutStart = Date.now();
   }
   
   ensureActiveClients () {
@@ -51,22 +45,20 @@ class QuestionRoom {
   }
   
   newQuestionAndUpdateSockets () {
+    delete this.currentTimeout;
+    
     this._newRandomQuestion();
     
     // Send everyone a new question as the server
     this.room.broadcastFrom(SERVER, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.currentQuestion);
     
-    // If there are no sockets in this room, stop generating new questions
+    // If there are sockets in this room, continue generating new questions
     this.room.ensureActiveClients();
-    if (this.room.sockets.length == 0) {
-      this.stopInterval();
-    } else {
-      this.startOrContinueInterval();
-    }
+    if (this.room.sockets.length !== 0) this.startOrContinueInterval();
   }
   
   secondsTillNextQuestion () {
-    const timePassed = Date.now() - this.lastIntervalStart;
+    const timePassed = Date.now() - this.lastTimeoutStart;
     return Math.floor((QUESTION_INTERVAL - timePassed) / 1000);
   }
   
