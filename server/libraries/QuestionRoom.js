@@ -1,5 +1,7 @@
 const questions = require('./../data/questions.js');
-const QUESTION_INTERVAL = 2 * 60 * 1000;
+const questionMap = questions.map((q) => { questionText: q });
+
+const QUESTION_INTERVAL = 70 * 1000;
 const SERVER = { socketIdInRoom: -1 };
 
 const Room = require('./Room.js');
@@ -8,7 +10,8 @@ class QuestionRoom {
   constructor (name) {
     this.room = new Room(name);
     this.currentTimeout;
-    this.currentQuestion = "";
+    this.currentQuestion = 0;
+    this.questions = shuffle([...questionMap]);
     
     this._newRandomQuestion();
   }
@@ -16,11 +19,15 @@ class QuestionRoom {
   join (socket) {
     this.room.join(socket);
     this.startOrContinueInterval();
-    this.room.sendFromToTarget(SERVER, socket, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.currentQuestion);    
+    this.room.sendFromToTarget(SERVER, socket, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.getCurrentQuestion());
   }
   
   leave (socket) {
     this.room.leave(socket);
+  }
+  
+  getCurrentQuestion () {
+    return this.questions[this.currentQuestion % this.questions.length].questionText;
   }
   
   startOrContinueInterval () {
@@ -33,17 +40,6 @@ class QuestionRoom {
     this.room.ensureActiveClients();
   }
   
-  _newRandomQuestion () {
-    let randomIndex = Math.floor(Math.random() * questions.length);
-    
-    // Ensure we do not get the same question
-    // Also ensure it is within bounds of the question array
-    if (questions[randomIndex] == this.currentQuestion)
-      randomIndex = (randomIndex + 1) % questions.length;
-    
-    this.currentQuestion = questions[randomIndex];
-  }
-  
   newQuestionAndUpdateSockets () {
     delete this.currentTimeout;
     
@@ -51,11 +47,10 @@ class QuestionRoom {
     this.room.ensureActiveClients();
     if (this.room.sockets.length !== 0) this.startOrContinueInterval();
     
-    // Generate a new question
-    this._newRandomQuestion();
+    this.currentQuestion = (this.currentQuestion + 1) % this.questions.length;
     
     // Send everyone a new question as the server
-    this.room.broadcastFrom(SERVER, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.currentQuestion);
+    this.room.broadcastFrom(SERVER, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.getCurrentQuestion());
   }
   
   secondsTillNextQuestion () {
@@ -71,5 +66,25 @@ class QuestionRoom {
     this.room.sendFromToTarget(from, target, message);
   }
 }
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 
 module.exports = QuestionRoom;

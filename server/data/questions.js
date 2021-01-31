@@ -62,8 +62,8 @@ module.exports = [
   "Gender neutral bathrooms are a good thing",
   "More gender neutrality is a good thing",
   "The distinction between man and woman is important",
-  "Men should have more rights than woman",
-  "Woman should have more rights than men",
+  "Men should have more rights than women",
+  "Women should have more rights than men",
   "People should not have more or less rights based on their gender",
   "I identify with the gender I was assigned at birth",
   "I feel comfortable about my gender",
@@ -102,7 +102,7 @@ module.exports = [
   "I feel comfortable about my looks",
   
   "How attractive I am is important to me",
-  "What people think of my look is important to me",
+  "What people think of my looks is important to me",
   "How attractive society thinks someone is is more or less how attractive I think people are",
   "I find attractiveness important in my non-sexual relationships",
   
@@ -135,6 +135,9 @@ module.exports = [
   "I would be comfortable in an open relationship",
   "I would like to have a fuckbuddy",
   "I am looking for (a) new relationship(s)",
+  
+  /* Social relationships */
+  "I am an alpha",
 
   /* Education */
   "Sex education is important",

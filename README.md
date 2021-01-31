@@ -6,6 +6,9 @@ Small web app that allows sharing your opinion with the other people on the page
 ## Goal
 Give people the opportunity to think and communicate about their opinions.
 
+## Hivemind gamemode
+Stay close to the hivemind or die.
+
 ## Design decisions:
 1. I am keeping it simple and short as a proof of concept
 2. Performance, I want it to easily scale well both horizontally and vertically without much effort
