@@ -47,14 +47,15 @@ class QuestionRoom {
   newQuestionAndUpdateSockets () {
     delete this.currentTimeout;
     
+    // If there are sockets in this room, continue generating new questions
+    this.room.ensureActiveClients();
+    if (this.room.sockets.length !== 0) this.startOrContinueInterval();
+    
+    // Generate a new question
     this._newRandomQuestion();
     
     // Send everyone a new question as the server
     this.room.broadcastFrom(SERVER, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.currentQuestion);
-    
-    // If there are sockets in this room, continue generating new questions
-    this.room.ensureActiveClients();
-    if (this.room.sockets.length !== 0) this.startOrContinueInterval();
   }
   
   secondsTillNextQuestion () {
