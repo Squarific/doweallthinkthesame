@@ -67,7 +67,7 @@ class QuestionRoom {
   
   secondsTillNextQuestion () {
     const timePassed = Date.now() - this.lastIntervalStart;
-    return Math.floor(QUESTION_INTERVAL - timePassed / 1000);
+    return Math.floor((QUESTION_INTERVAL - timePassed) / 1000);
   }
   
   broadcastFrom (from, message) {
