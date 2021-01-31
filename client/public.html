@@ -61,6 +61,7 @@
           background:linear-gradient(90deg, #dc0000, #fddd27, #4dfd27);
           position:relative;
           border:3px solid white;
+          user-select: none;
         }
         
         .agreement {
@@ -258,8 +259,10 @@
         
         if (type === "question") {
           const socketCount = message[2];
-          const question = message[3];
+          const secondsRemaining = message[3];
+          const question = message[4];
           updateQuestion(question);
+          updateSecondsRemaining(secondsRemaining);
           updateSocketCount(socketCount);
         }
       }
@@ -269,6 +272,21 @@
         while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
         questionElem.appendChild(document.createTextNode(question));
         clearAllOpinions();
+      }
+      
+      function updateSecondsRemaining (secondsRemaining) {
+        const secondsElem = document.getElementById('secondsremaining');
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(secondsRemaining));
+        secondsElem.secondsRemaining = secondsRemaining;
+      }
+      
+      function secondsRemainingInterval () {
+        const secondsElem = document.getElementById('secondsremaining');
+        const secondsRemaining = Math.max(0, secondsElem.secondsRemaining - 1);
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(secondsRemaining));
+        secondsElem.secondsRemaining = secondsRemaining;
       }
       
       function updateSocketCount (socketCount) {
@@ -312,6 +330,7 @@
       
       randomColor();
       connect();
+      setInterval(secondsRemainingInterval, 1000);
     </script>
   </body>
 </html>

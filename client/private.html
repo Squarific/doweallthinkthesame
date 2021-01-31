@@ -2,6 +2,10 @@
   <head>
     <title>De we all think the same?</title>
     <style>
+        html {
+          height:100%;
+        }
+    
         body {
           font-family:times;
           background:#d92f2f;
@@ -56,6 +60,8 @@
           background:#ffffff2b;
           background:linear-gradient(90deg, #dc0000, #fddd27, #4dfd27);
           position:relative;
+          border:3px solid white;
+          user-select: none;
         }
         
         .agreement {
@@ -63,7 +69,7 @@
           flex-direction:column;
           justify-content:space-between;
           align-items:center;
-          border:3px solid white;
+          border:0px solid white;
           flex-grow:1;
           flex-basis:0;
           font-family:sans-serif;
@@ -71,6 +77,7 @@
           font-weight:bold;
           color:white;
           z-index:10;
+          padding:5px;
         }
         
         .fullyagree {
@@ -252,8 +259,10 @@
         
         if (type === "question") {
           const socketCount = message[2];
-          const question = message[3];
+          const secondsRemaining = message[3];
+          const question = message[4];
           updateQuestion(question);
+          updateSecondsRemaining(secondsRemaining);
           updateSocketCount(socketCount);
         }
       }
@@ -263,6 +272,21 @@
         while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
         questionElem.appendChild(document.createTextNode(question));
         clearAllOpinions();
+      }
+      
+      function updateSecondsRemaining (secondsRemaining) {
+        const secondsElem = document.getElementById('secondsremaining');
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(secondsRemaining));
+        secondsElem.secondsRemaining = secondsRemaining;
+      }
+      
+      function secondsRemainingInterval () {
+        const secondsElem = document.getElementById('secondsremaining');
+        const secondsRemaining = Math.max(0, secondsElem.secondsRemaining - 1);
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(secondsRemaining));
+        secondsElem.secondsRemaining = secondsRemaining;
       }
       
       function updateSocketCount (socketCount) {
@@ -306,6 +330,7 @@
       
       randomColor();
       connect();
+      setInterval(secondsRemainingInterval, 1000);
     </script>
   </body>
 </html>
