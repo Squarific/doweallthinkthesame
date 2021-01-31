@@ -15,7 +15,7 @@ class QuestionRoom {
   
   join (socket) {
     this.room.join(socket);
-    this.startInterval();
+    this.startOrContinueInterval();
     this.room.sendFromToTarget(SERVER, socket, "question;" + this.room.sockets.length + ";" + this.secondsTillNextQuestion() + ";" + this.currentQuestion);    
   }
   
