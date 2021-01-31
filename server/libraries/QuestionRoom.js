@@ -12,8 +12,6 @@ class QuestionRoom {
     this.currentTimeout;
     this.currentQuestion = 0;
     this.questions = shuffle([...questionMap]);
-    
-    this._newRandomQuestion();
   }
   
   join (socket) {
