@@ -1,5 +1,5 @@
 const questions = require('./../data/questions.js');
-const questionMap = questions.map((q) => { questionText: q });
+const questionMap = questions.map((q) => { return { questionText: q } });
 
 const QUESTION_INTERVAL = 70 * 1000;
 const SERVER = { socketIdInRoom: -1 };
