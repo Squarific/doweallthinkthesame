@@ -20,6 +20,9 @@ Stay close to the hivemind or die.
 1. Chat -> Seperate server?
 2. WebsitePluginStore?
 3. Timer
+4. Reveil after a while?
+5. balls and only name on hover
+6. 
 
 ### Performance
 1. Disconnect clients if time start slipping

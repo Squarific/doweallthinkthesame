@@ -1,0 +1,336 @@
+<html>
+  <head>
+    <title>De we all think the same?</title>
+    <style>
+        html {
+          height:100%;
+        }
+    
+        body {
+          font-family:times;
+          background:#d92f2f;
+          display:flex;
+          justify-content:center;
+          align-items:stretch;
+          flex-direction:column;
+          margin:0;
+          min-height:100%;
+          overflow:hidden;
+        }
+        
+        h1 {
+          text-align:center;
+          margin:2rem;
+          text-shadow: 2px 2px 0 white;
+          font-weight:bold;
+          font-size:72px;
+          max-width:350px;
+        }
+        
+        h2 {
+          text-align:center;
+          margin:2rem;
+          text-shadow: 1px 1px 3px #111;
+          color:#efefef;
+          font-weight:bold;
+          font-size:48px;
+          flex-grow:1;
+        }
+        
+        a {
+          color:white;
+          font-weight:bold;
+          text-decoration:none;
+        }
+        
+        .buttons {
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+        
+        .slider {
+          cursor:pointer;
+          cursor:crosshair;
+          cursor:cell;
+          display:flex;
+          flex-grow:1;
+          margin:1rem;
+          background:#ffffff2b;
+          background:linear-gradient(90deg, #dc0000, #fddd27, #4dfd27);
+          position:relative;
+          border:3px solid white;
+          user-select: none;
+        }
+        
+        .agreement {
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+          align-items:center;
+          border:0px solid white;
+          flex-grow:1;
+          flex-basis:0;
+          font-family:sans-serif;
+          font-size:32px;
+          font-weight:bold;
+          color:white;
+          z-index:10;
+          padding:5px;
+        }
+        
+        .fullyagree {
+          align-items: flex-end;
+        }
+        
+        .fullydisagree {
+          align-items: flex-start;
+        }
+        
+        .center {
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+        
+        .opinion {
+          position:absolute;
+          font-weight:bold;
+          font-size:1.5rem;
+          transform:translate(-50%, -50%);
+          font-family:sans-serif;
+          background: #4c2897;
+          color:white;
+          padding:5px;
+          z-index:100;
+          transition-duration:0.3s;
+        }
+        
+        #myopinion {
+          background:#972828;
+        }
+        
+        #messages {
+          background:#00000057;
+          padding:5px;
+          color:white;
+          display: flex;
+          justify-content: space-between;
+        }
+        
+        .graygradient {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(0deg, #54545400, #545454);
+          margin: 0;
+          z-index: 0;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="messages">
+      <div id="share">Share this url: </div>
+      <div id="socketcount" class="center">not connected</div>
+    </div>
+    <div class="center">
+      <h2>
+        <span id="question">This app requires javascript and websockets.</span> | <span id="secondsremaining"></span>
+      </h2>
+    </div>
+    <div id="slider" class="slider">
+      <div class="graygradient"></div>
+      <div class="agreement fullydisagree"><span>No?</span><span>NO!</span></div>
+      <div class="agreement disagree"></div>
+      <div class="agreement slightlydisagree"></div>
+      <div class="agreement slightlyagree"></div>
+      <div class="agreement agree"></div>
+      <div class="agreement fullyagree"><span>Yes?</span><span>YES!</span></div>
+      <div id="myopinion" style="left:50%; top:50%;" class="opinion">
+        ME
+      </div>
+    </div>
+    <script>
+      let reconnect_seconds = 2;
+      let socket;
+      let name = prompt("Please choose a name");
+      
+      var urlInfo = location.hash.substr(1, location.hash.length).split(",");
+      var room = urlInfo[0] || makeid(8);
+      location.hash = room;
+      document.getElementById('share').innerHTML = "Share this url with your friends: <a href=\"" + location + "\">" + location + "</a>";
+      
+      function makeid(length) {
+         var result           = '';
+         var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+         var charactersLength = characters.length;
+         for ( var i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+         }
+         return result;
+      }
+      
+      /*
+        SOCKET
+      */
+      function connect () {
+        clearAllOpinions();
+        updateQuestion("Connecting...");
+        
+        socket = new WebSocket('ws://direct.anondraw.com:7846');
+      
+        socket.onmessage = (m) => {
+          console.log("Socket: " + m.data);
+          receiveMessage(m);
+        };
+        
+        socket.onopen = () => {
+          console.log("Socket established, joining public room");
+          updateQuestion("Connected, joining public room.");
+          clearAllOpinions();
+          socket.send(room);
+          reconnect_seconds = 2;
+        };
+        
+        socket.onclose = function(e) {
+          console.log('Socket is closed. Reconnect will be attempted in ' + reconnect_seconds + ' seconds.', e.reason);
+          
+          setTimeout(function() {
+            connect();
+            
+            reconnect_seconds *= 2;
+            if (reconnect_seconds > 10 * 60) reconnect_seconds = 10 * 60;
+          }, reconnect_seconds * 1000);
+        };
+        
+        socket.onerror = function(err, err2) {
+          console.error('Socket encountered error: ', err.message, 'Closing socket');
+          updateQuestion("Could not connect, reconnecting in " + reconnect_seconds + " seconds.");
+          socket.close();
+        };
+      }
+    
+      /*
+        CLICKING
+      */
+      document.getElementById('slider').addEventListener('click', function (event) {
+          const slider = document.getElementById('slider');
+          const boundingBox = slider.getBoundingClientRect();
+          
+          const clientX = (typeof event.clientX === 'number') ? event.clientX : event.changedTouches[0].clientX;
+          const clientY = (typeof event.clientY === 'number') ? event.clientY : event.changedTouches[0].clientY;
+          
+          const relativeX = clientX - boundingBox.left;
+          const relativeY = clientY - boundingBox.top;
+          
+          const xRatio = relativeX / boundingBox.width;
+          const yRatio = relativeY / boundingBox.height;
+
+          document.getElementById('myopinion').style.display = "";
+          document.getElementById('myopinion').style.left = (xRatio * 100) + "%";
+          document.getElementById('myopinion').style.top = (yRatio * 100) + "%";
+          
+          socket.send(name + ";" + xRatio.toPrecision(6) + ";" + yRatio.toPrecision(6));
+      });
+      
+      /*
+        RECEIVING POSITIONS
+      */
+      
+      function receiveMessage (m) {
+        const message = m.data.split(";");
+        
+        const socketId = message[0];
+        
+        // Intercept messages from the server
+        if (socketId == -1) {
+          return receiveServerMessage(message);
+        }
+        
+        // Otherwise it is an opinion that we should update
+        const socketName = message[1];
+        const ratioX = message[2];
+        const ratioY = message[3];
+        updateOpinion(socketId, socketName, ratioX, ratioY);
+      }
+      
+      function receiveServerMessage (message) {
+        const type = message[1];
+        
+        if (type === "question") {
+          const socketCount = message[2];
+          const secondsRemaining = message[3];
+          const question = message[4];
+          updateQuestion(question);
+          updateSecondsRemaining(secondsRemaining);
+          updateSocketCount(socketCount);
+        }
+      }
+      
+      function updateQuestion (question) {
+        const questionElem = document.getElementById('question');
+        while (questionElem.firstChild) questionElem.removeChild(questionElem.firstChild);
+        questionElem.appendChild(document.createTextNode(question));
+        clearAllOpinions();
+      }
+      
+      function updateSecondsRemaining (secondsRemaining) {
+        const secondsElem = document.getElementById('secondsremaining');
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(Math.max(0, secondsRemaining)));
+        secondsElem.secondsRemaining = Math.max(0, secondsRemaining);
+      }
+      
+      function secondsRemainingInterval () {
+        const secondsElem = document.getElementById('secondsremaining');
+        const secondsRemaining = Math.max(0, secondsElem.secondsRemaining - 1);
+        while (secondsElem.firstChild) secondsElem.removeChild(secondsElem.firstChild);
+        secondsElem.appendChild(document.createTextNode(secondsRemaining));
+        secondsElem.secondsRemaining = secondsRemaining;
+      }
+      
+      function updateSocketCount (socketCount) {
+        const socketCountElem = document.getElementById("socketcount");
+        while (socketCountElem.firstChild) socketCountElem.removeChild(socketCountElem.firstChild);
+        socketCountElem.appendChild(document.createTextNode(socketCount + " people connected"));
+      }
+      
+      function updateOpinion (socketId, socketName, ratioX, ratioY) {
+        const opinion = document.getElementById("opinion-from-" + socketId) || createOpinion(socketId);
+        
+        opinion.style.left = (ratioX * 100) + "%";
+        opinion.style.top = (ratioY * 100) + "%";
+
+        while (opinion.firstChild) opinion.removeChild(opinion.firstChild);
+        opinion.appendChild(document.createTextNode(socketName.slice(0, 10)));
+      }
+      
+      function createOpinion (socketId) {
+        const opinion = document.getElementById("slider").appendChild(document.createElement("div"));
+        opinion.className = "opinion";
+        opinion.id = "opinion-from-" + socketId;
+        return opinion;
+      }
+      
+      function clearAllOpinions () {
+        let opinions = document.getElementsByClassName("opinion");
+        for (let i = opinions.length - 1; i >= 0; i--) {
+          if (opinions[i].id = "myopinion") {
+            opinions[i].style.display = "none";
+            continue;
+          }
+          opinions[i].parentNode.removeChild(opinions[i]);
+        }
+      }
+      
+      function randomColor () {
+        let hue = Math.floor((Math.random() * 360));
+        document.body.style.background = "linear-gradient(0deg, hsl(" + hue + ", 81%, 59%) 0%, hsl(" + (hue + Math.random() * 70 + 20) + ", 81%, 59%))";
+      }
+      
+      randomColor();
+      connect();
+      setInterval(secondsRemainingInterval, 1000);
+    </script>
+  </body>
+</html>

@@ -11,7 +11,6 @@ module.exports = [
   "I try to be good",
   "I try to be nice to people",
   "People should try to be nice to eachother",
-  "In general people can be trusted",
   
   /* Life */
   "Life has meaning",
@@ -76,23 +75,6 @@ module.exports = [
   "I identify with the gender I was assigned at birth",
   "I feel comfortable about my gender",
   "Drag should be illegal",
-  
-  "Gender is a personal choice",
-  "Gender is what a person perceives",
-  "Gender is how a person behaves",
-  
-  
-// "Je kan niet panseksueel en aseksueel zijn",
-// "Iedereen wordt biseksueel geboren",
-// "Seksuele orientatie is gebaseerd op met wie je de lakens deelt",
-// "Wanneer een lesbienne zich aangetrokken voelt tot een niet binaire persoon is ze geen lesbienne meer",
-// "Wanneer een lesbienne zich aangetrokken voelt tot een man is ze geen lesbienne meer",
-// "Een niet-binaire persoon kan niet hetero, homo of lesbisch zijn",
-// "Een man die ook op mannen valt kan niet hetero zijn",
-// "Iemand die genderfluide is heeft een wisselende seksualiteit.",
-// "Wanneer een man gevoelens heeft voor een andere man is hij homo"
-
-
   
   /* LGBTQIA+ */
   "I identify as LGBTQIA+",
@@ -182,7 +164,7 @@ module.exports = [
   
   /* Religion */
   "After I die, I will still be alive somewhere (heaven, ...)",
-  "There is something intelligent in this universe that we don't know about. For example one or more gods, nature force, karma, alien, ...",
+  "There is something intelligent in this universe that we don't know about. For example one or more gods, nature force, karma, ...",
   
   /* Drugs, addiction */
   "Alcohol is a drug",
